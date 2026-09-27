@@ -4,6 +4,6 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   // Deployed as a GitHub Pages *project site* under {owner}.github.io/{repo}.
-  base: '/invoice-receipt-maker/',
+  base: '/Invoice-Receipt-Maker/',
   plugins: [react()],
 })
