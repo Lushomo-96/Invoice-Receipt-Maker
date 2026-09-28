@@ -5,6 +5,14 @@ import App from './App';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import './index.css';
 
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register(`${import.meta.env.BASE_URL}sw.js`)
+      .catch((error) => console.error('Service worker registration failed:', error));
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppErrorBoundary>
@@ -14,3 +22,4 @@ createRoot(document.getElementById('root')!).render(
     </AppErrorBoundary>
   </React.StrictMode>
 );
+
