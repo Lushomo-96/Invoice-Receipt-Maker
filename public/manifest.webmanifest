@@ -2,16 +2,40 @@
   "name": "Invoice & Receipt Maker",
   "short_name": "InvoiceMaker",
   "description": "Create invoices, quotations and receipts, record payments, run reports, and keep local backups.",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "orientation": "any",
   "background_color": "#f9fafb",
   "theme_color": "#16a34a",
   "lang": "en",
+  "prefer_related_applications": false,
   "categories": [
     "business",
     "finance",
     "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "./#/home"
+    },
+    {
+      "name": "New invoice",
+      "short_name": "New invoice",
+      "url": "./#/invoices/new"
+    },
+    {
+      "name": "Customers",
+      "short_name": "Customers",
+      "url": "./#/customers"
+    }
   ],
   "icons": [
     {

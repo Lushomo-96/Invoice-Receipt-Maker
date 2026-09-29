@@ -34,7 +34,8 @@ function pwaStaticShell(): Plugin {
         return ['.html', '.js', '.css', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.woff', '.woff2', '.ttf', '.otf', '.json'].includes(extname(file).toLowerCase())
       })
       const files = [...new Set([...bundleFiles, ...publicFiles])].sort()
-      const urls = files.map((file) => `${base}${file}`)
+      const appShellPath = base
+      const urls = [...new Set([appShellPath, ...files.map((file) => `${base}${file}`)])]
       const version = createHash('sha256').update(urls.join('\n')).digest('hex').slice(0, 12)
       const precacheUrls = JSON.stringify(urls)
 
@@ -45,12 +46,17 @@ function pwaStaticShell(): Plugin {
 const CACHE_PREFIX = 'invoice-receipt-maker-shell-';
 const CACHE_NAME = CACHE_PREFIX + '${version}';
 const PRECACHE_URLS = ${precacheUrls};
-const APP_SHELL_URL = new URL('${base}index.html', self.location.origin).href;
+const APP_SHELL_PATH = '${appShellPath}';
+const APP_SHELL_URL = new URL(APP_SHELL_PATH, self.location.origin).href;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then(async (cache) => {
+        await cache.add(APP_SHELL_URL);
+        const optionalUrls = PRECACHE_URLS.filter((url) => url !== APP_SHELL_PATH);
+        await Promise.allSettled(optionalUrls.map((url) => cache.add(url)));
+      })
       .then(() => self.skipWaiting())
   );
 });
@@ -74,7 +80,13 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match(APP_SHELL_URL))
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(APP_SHELL_URL, copy));
+          return response;
+        })
+        .catch(() => caches.match(APP_SHELL_URL))
     );
     return;
   }

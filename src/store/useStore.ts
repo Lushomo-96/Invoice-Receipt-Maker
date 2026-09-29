@@ -1669,8 +1669,10 @@ const identitySelector = (state: AppState): PublicAppState => state as unknown a
 export function useStore(): PublicAppState;
 export function useStore<T>(selector: (state: PublicAppState) => T): T;
 export function useStore<T>(selector?: (state: PublicAppState) => T): PublicAppState | T {
-  if (!selector) return useZustandStore(appStore, identitySelector);
-  return useZustandStore(appStore, (state) => selector(state as unknown as PublicAppState));
+  return useZustandStore(appStore, (state) => {
+    const publicState = identitySelector(state);
+    return selector ? selector(publicState) : publicState;
+  });
 }
 
 export function useOnlineStatus() {
