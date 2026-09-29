@@ -10,6 +10,13 @@
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <link rel="apple-touch-icon" href="%BASE_URL%icon-192.png" />
     <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <script>
+      if ('%MODE%' === 'production' && 'serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('%BASE_URL%sw.js', { scope: '%BASE_URL%' })
+          .catch((error) => console.error('Service worker registration failed:', error));
+      }
+    </script>
     <title>Invoice & Receipt Maker</title>
   </head>
   <body>
